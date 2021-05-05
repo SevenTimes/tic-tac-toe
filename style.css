@@ -1,0 +1,35 @@
+body {
+  background-color: gainsboro;
+  width: 100%;
+}
+h1 {
+  margin: 40px;
+  font-size: 48px;
+  text-align: center;
+}
+
+#game-board {
+  margin: 0 auto;
+  width: 400px;
+  height: 400px;
+  background-color: black;
+  display: grid;
+  grid-template:
+    'cell cell cell'
+    'cell cell cell'
+    'cell cell cell';
+  gap: 10px;
+}
+
+.cell {
+  background-color: gainsboro;
+}
+
+.player-1 {
+  z-index: 1;
+  background-color: red;
+}
+.player-2 {
+  z-index: 1;
+  background-color: blue;
+}
