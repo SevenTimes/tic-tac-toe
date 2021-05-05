@@ -1,8 +1,8 @@
-const newPlayer = (mark) => {
-  return { mark };
+const newPlayer = (mark, name) => {
+  return { mark, name };
 };
-const player1 = newPlayer('X');
-const player2 = newPlayer('O');
+let player1 = newPlayer('X', 'Player 1');
+let player2 = newPlayer('O', 'Player 2');
 let currentPlayer = player1;
 
 const GameBoard = (() => {
@@ -12,6 +12,10 @@ const GameBoard = (() => {
 })();
 
 const GameLogic = (() => {
+  const p1Name = document.getElementById('p1-name');
+  const p2Name = document.getElementById('p2-name');
+  const startBtn = document.getElementById('start');
+  const resultOutput = document.getElementById('results');
   const WIN_CONDITIONS = [
     [0, 1, 2],
     [3, 4, 5],
@@ -51,10 +55,13 @@ const GameLogic = (() => {
   const resetGame = () => {
     GameBoard.gameBoard = [];
     currentPlayer = player1;
+    resultOutput.innerText = '';
+    updateBoard();
+  };
+  const endGame = () => {
     Array.from(GameBoard.cells).forEach((cell) => {
       cell.classList.remove('player-1', 'player-2');
     });
-    updateBoard();
   };
   const checkWinConditions = () => {
     if (
@@ -62,38 +69,41 @@ const GameLogic = (() => {
         winCondition.every((x) => GameBoard.gameBoard[x] === 'X')
       )
     ) {
-      console.log('Player 1 WINS!');
-      resetGame();
+      resultOutput.innerText = `${player1.name} WINS!`;
+      endGame();
     } else if (
       WIN_CONDITIONS.some((winCondition) =>
         winCondition.every((x) => GameBoard.gameBoard[x] === 'O')
       )
     ) {
-      console.log('Player 2 WINS!');
-      resetGame();
-    }
-
-    if (
+      resultOutput.innerText = `${player2.name} WINS!`;
+      endGame();
+    } else if (
       GameBoard.gameBoard.filter((el) => {
         return el != null;
       }).length === 9
     ) {
-      console.log('You are tied!');
-      resetGame();
+      resultOutput.innerText = 'You are tied!';
+      endGame();
+    } else {
+      updateBoard();
     }
   };
-  Array.from(GameBoard.cells).forEach((cell, index) => {
-    cell.addEventListener('click', () => {
-      if (GameBoard.gameBoard[index]) {
-        return;
-      }
-      GameBoard.gameBoard[index] = currentPlayer.mark;
-      updateBoard();
-      checkWinConditions();
-      endTurn();
+  startBtn.addEventListener('click', () => {
+    resetGame();
+    if (p1Name.value) player1.name = p1Name.value;
+    if (p2Name.value) player2.name = p2Name.value;
+    Array.from(GameBoard.cells).forEach((cell, index) => {
+      cell.addEventListener('click', () => {
+        if (GameBoard.gameBoard[index]) {
+          return;
+        }
+        GameBoard.gameBoard[index] = currentPlayer.mark;
+        endTurn();
+        checkWinConditions();
+      });
     });
   });
-  return { updateBoard };
-})();
 
-GameLogic.updateBoard();
+  return { updateBoard, resetGame };
+})();
