@@ -7,12 +7,21 @@ let currentPlayer = player1;
 
 const GameBoard = (() => {
   const cells = document.getElementsByClassName('cell');
-  //   let gameBoard = ['X', 'O', 'O', 'X', 'X', 'O', 'X', 'O', 'X'];
   let gameBoard = [];
   return { cells, gameBoard };
 })();
 
 const GameLogic = (() => {
+  const WIN_CONDITIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
   const endTurn = () => {
     switch (currentPlayer) {
       case player1:
@@ -39,14 +48,49 @@ const GameLogic = (() => {
       }
     });
   };
+  const resetGame = () => {
+    GameBoard.gameBoard = [];
+    currentPlayer = player1;
+    Array.from(GameBoard.cells).forEach((cell) => {
+      cell.classList.remove('player-1', 'player-2');
+    });
+    updateBoard();
+  };
+  const checkWinConditions = () => {
+    if (
+      WIN_CONDITIONS.some((winCondition) =>
+        winCondition.every((x) => GameBoard.gameBoard[x] === 'X')
+      )
+    ) {
+      console.log('Player 1 WINS!');
+      resetGame();
+    } else if (
+      WIN_CONDITIONS.some((winCondition) =>
+        winCondition.every((x) => GameBoard.gameBoard[x] === 'O')
+      )
+    ) {
+      console.log('Player 2 WINS!');
+      resetGame();
+    }
+
+    if (
+      GameBoard.gameBoard.filter((el) => {
+        return el != null;
+      }).length === 9
+    ) {
+      console.log('You are tied!');
+      resetGame();
+    }
+  };
   Array.from(GameBoard.cells).forEach((cell, index) => {
     cell.addEventListener('click', () => {
       if (GameBoard.gameBoard[index]) {
         return;
       }
       GameBoard.gameBoard[index] = currentPlayer.mark;
-      endTurn();
       updateBoard();
+      checkWinConditions();
+      endTurn();
     });
   });
   return { updateBoard };
