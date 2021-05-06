@@ -53,15 +53,13 @@ const GameLogic = (() => {
     });
   };
   const resetGame = () => {
+    Array.from(GameBoard.cells).forEach((cell) => {
+      cell.classList.remove('player-1', 'player-2');
+    });
     GameBoard.gameBoard = [];
     currentPlayer = player1;
     resultOutput.innerText = '';
     updateBoard();
-  };
-  const endGame = () => {
-    Array.from(GameBoard.cells).forEach((cell) => {
-      cell.classList.remove('player-1', 'player-2');
-    });
   };
   const checkWinConditions = () => {
     if (
@@ -70,24 +68,20 @@ const GameLogic = (() => {
       )
     ) {
       resultOutput.innerText = `${player1.name} WINS!`;
-      endGame();
     } else if (
       WIN_CONDITIONS.some((winCondition) =>
         winCondition.every((x) => GameBoard.gameBoard[x] === 'O')
       )
     ) {
       resultOutput.innerText = `${player2.name} WINS!`;
-      endGame();
     } else if (
       GameBoard.gameBoard.filter((el) => {
         return el != null;
       }).length === 9
     ) {
       resultOutput.innerText = 'You are tied!';
-      endGame();
-    } else {
-      updateBoard();
     }
+    updateBoard();
   };
   startBtn.addEventListener('click', () => {
     resetGame();
